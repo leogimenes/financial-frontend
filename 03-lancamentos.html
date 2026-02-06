@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lançamentos - Análise Financeira</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .app-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .nav-tab {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .nav-tab.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 400;
+            color: #212121;
+        }
+        
+        .page-subtitle {
+            font-size: 14px;
+            color: #757575;
+        }
+        
+        .btn-export {
+            background: #388e3c;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .btn-export:hover {
+            background: #2e7d32;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+        
+        .summary-card.negative::before {
+            background: #d32f2f;
+        }
+        
+        .summary-card.positive::before {
+            background: #388e3c;
+        }
+        
+        .summary-card.neutral::before {
+            background: #1976d2;
+        }
+        
+        .summary-label {
+            font-size: 12px;
+            color: #757575;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .summary-value {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 4px;
+        }
+        
+        .summary-value.negative {
+            color: #d32f2f;
+        }
+        
+        .summary-value.positive {
+            color: #388e3c;
+        }
+        
+        .summary-change {
+            font-size: 13px;
+            color: #9e9e9e;
+        }
+        
+        .filters-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 180px;
+        }
+        
+        .filter-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #757575;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .filter-select,
+        .filter-input {
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Roboto', sans-serif;
+            background: white;
+        }
+        
+        .btn-filter {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #fafafa;
+        }
+        
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 500;
+            color: #757575;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 16px;
+            border-top: 1px solid #f5f5f5;
+            font-size: 14px;
+        }
+        
+        tbody tr {
+            transition: background 0.2s;
+        }
+        
+        tbody tr:hover {
+            background: #fafafa;
+        }
+        
+        .category-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .cat-mercado {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .cat-delivery {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .cat-transporte {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .cat-saude {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .cat-assinatura {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        .cat-essencial {
+            background: #e0f2f1;
+            color: #00695c;
+        }
+        
+        .cat-lazer {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+        
+        .amount-debit {
+            color: #d32f2f;
+            font-weight: 500;
+        }
+        
+        .amount-credit {
+            color: #388e3c;
+            font-weight: 500;
+        }
+        
+        .parcela-info {
+            font-size: 12px;
+            color: #9e9e9e;
+            display: block;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-bar">
+        <div class="app-title">
+            <span class="material-icons">account_balance_wallet</span>
+            <span>Análise Financeira</span>
+        </div>
+        <nav class="nav-tabs">
+            <a href="#" class="nav-tab">Upload</a>
+            <a href="#" class="nav-tab">Documentos</a>
+            <a href="#" class="nav-tab active">Lançamentos</a>
+            <a href="#" class="nav-tab">Relatórios</a>
+        </nav>
+    </div>
+    
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Lançamentos</h1>
+                <p class="page-subtitle">348 transações encontradas</p>
+            </div>
+            <button class="btn-export">
+                <span class="material-icons" style="font-size: 18px;">download</span>
+                Exportar Excel
+            </button>
+        </div>
+        
+        <div class="summary-cards">
+            <div class="summary-card negative">
+                <div class="summary-label">Total de Débitos</div>
+                <div class="summary-value negative">R$ 14.190,42</div>
+                <div class="summary-change">Dezembro 2025</div>
+            </div>
+            
+            <div class="summary-card positive">
+                <div class="summary-label">Total de Créditos</div>
+                <div class="summary-value positive">R$ 8.500,00</div>
+                <div class="summary-change">Dezembro 2025</div>
+            </div>
+            
+            <div class="summary-card negative">
+                <div class="summary-label">Saldo do Período</div>
+                <div class="summary-value negative">- R$ 5.690,42</div>
+                <div class="summary-change">Déficit mensal</div>
+            </div>
+            
+            <div class="summary-card neutral">
+                <div class="summary-label">Média por Transação</div>
+                <div class="summary-value">R$ 40,78</div>
+                <div class="summary-change">348 transações</div>
+            </div>
+        </div>
+        
+        <div class="filters-card">
+            <div class="filter-group">
+                <label class="filter-label">Categoria</label>
+                <select class="filter-select">
+                    <option>Todas</option>
+                    <option>Mercado</option>
+                    <option>Delivery</option>
+                    <option>Transporte</option>
+                    <option>Saúde</option>
+                    <option>Assinatura</option>
+                    <option>Essencial</option>
+                    <option>Lazer</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Tipo</label>
+                <select class="filter-select">
+                    <option>Todos</option>
+                    <option>Débito</option>
+                    <option>Crédito</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Data Início</label>
+                <input type="date" class="filter-input" value="2025-12-01">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Data Fim</label>
+                <input type="date" class="filter-input" value="2025-12-31">
+            </div>
+            
+            <div class="filter-group" style="flex: 1;">
+                <label class="filter-label">Buscar</label>
+                <input type="text" class="filter-input" placeholder="Descrição...">
+            </div>
+            
+            <button class="btn-filter">
+                <span class="material-icons" style="font-size: 18px;">search</span>
+                Filtrar
+            </button>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Cartão/Conta</th>
+                        <th style="text-align: right;">Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>02/01/2026</td>
+                        <td>
+                            Ifd*Alan Rafael Caetan
+                            <span class="parcela-info">Delivery via iFood</span>
+                        </td>
+                        <td>
+                            <span class="category-chip cat-delivery">
+                                <span class="material-icons" style="font-size: 14px;">fastfood</span>
+                                Delivery
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 57,99</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>01/01/2026</td>
+                        <td>Supermercados Jau Serv</td>
+                        <td>
+                            <span class="category-chip cat-mercado">
+                                <span class="material-icons" style="font-size: 14px;">shopping_cart</span>
+                                Mercado
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 73,07</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>31/12/2025</td>
+                        <td>Confianca Jau</td>
+                        <td>
+                            <span class="category-chip cat-mercado">
+                                <span class="material-icons" style="font-size: 14px;">shopping_cart</span>
+                                Mercado
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 75,98</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>31/12/2025</td>
+                        <td>Posto Nosso Rancho</td>
+                        <td>
+                            <span class="category-chip cat-transporte">
+                                <span class="material-icons" style="font-size: 14px;">local_gas_station</span>
+                                Transporte
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 100,00</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>30/12/2025</td>
+                        <td>Supermercados Jau Serv</td>
+                        <td>
+                            <span class="category-chip cat-mercado">
+                                <span class="material-icons" style="font-size: 14px;">shopping_cart</span>
+                                Mercado
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 222,46</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>30/12/2025</td>
+                        <td>
+                            Google One
+                            <span class="parcela-info">Assinatura de armazenamento</span>
+                        </td>
+                        <td>
+                            <span class="category-chip cat-assinatura">
+                                <span class="material-icons" style="font-size: 14px;">subscriptions</span>
+                                Assinatura
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 9,99</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>26/12/2025</td>
+                        <td>Netflix.Com</td>
+                        <td>
+                            <span class="category-chip cat-assinatura">
+                                <span class="material-icons" style="font-size: 14px;">subscriptions</span>
+                                Assinatura
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 72,80</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>25/12/2025</td>
+                        <td>
+                            Wellhub Gympass Br Wel
+                            <span class="parcela-info">Academia</span>
+                        </td>
+                        <td>
+                            <span class="category-chip cat-assinatura">
+                                <span class="material-icons" style="font-size: 14px;">fitness_center</span>
+                                Assinatura
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 79,90</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>24/12/2025</td>
+                        <td>Cobasi Jau</td>
+                        <td>
+                            <span class="category-chip cat-essencial">
+                                <span class="material-icons" style="font-size: 14px;">pets</span>
+                                Pet
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 345,52</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>18/12/2025</td>
+                        <td>
+                            Conta Vivo
+                            <span class="parcela-info">Telefonia móvel</span>
+                        </td>
+                        <td>
+                            <span class="category-chip cat-essencial">
+                                <span class="material-icons" style="font-size: 14px;">phone</span>
+                                Essencial
+                            </span>
+                        </td>
+                        <td>Nubank ****7449</td>
+                        <td style="text-align: right;">
+                            <span class="amount-debit">- R$ 130,00</span>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>15/12/2025</td>
+                        <td>Depósito - Salário</td>
+                        <td>
+                            <span class="category-chip cat-essencial">
+                                <span class="material-icons" style="font-size: 14px;">attach_money</span>
+                                Receita
+                            </span>
+                        </td>
+                        <td>Banco do Brasil</td>
+                        <td style="text-align: right;">
+                            <span class="amount-credit">+ R$ 8.500,00</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
