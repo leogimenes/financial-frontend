@@ -120,7 +120,7 @@ export default function CategoriasPage() {
         </Typography>
         <Grid container spacing={2} sx={{ mb: 4 }}>
           {globalCategories.map(cat => (
-            <Grid item xs={12} sm={6} md={4} key={cat.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={cat.id}>
               <Card>
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -145,7 +145,7 @@ export default function CategoriasPage() {
         ) : (
           <Grid container spacing={2}>
             {customCategories.map(cat => (
-              <Grid item xs={12} sm={6} md={4} key={cat.id}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={cat.id}>
                 <Card>
                   <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
